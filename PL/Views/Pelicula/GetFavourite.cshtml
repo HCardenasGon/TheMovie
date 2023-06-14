@@ -1,0 +1,35 @@
+﻿@model ML.Pelicula
+@{
+    ViewData["Title"] = "GetFavourite";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>GetFavourite</h1>
+
+<div class="container">
+    <section>
+    </section>
+
+    <div class="row">
+        @if (Model.Peliculas == null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @ViewBag.Message
+            </div>
+        }
+        @foreach (ML.Pelicula pelicula in Model.Peliculas)
+        {
+            <div class="col mt-3 pt-3">
+                <div class="card text-primary border-success mb-3" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">Movie</h5>
+                        <p class="card-text">Nombre: @pelicula.title</p>
+                        <img class="card-img-top" id="Img" src="https://image.tmdb.org/t/p/original/@pelicula.poster_path" />
+                        <p class="card-text">Nombre: @pelicula.overview</p>
+                        <a class="btn btn-secondary bi bi-heart-fill" href="@Url.Action("FavouriteDelete", "Pelicula", new { id = pelicula.id})"></a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,47 @@
+﻿@model ML.Pelicula
+@{
+    ViewData["Title"] = "GetPopular";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>GetPopular</h1>
+
+<div class="container">
+    <section>
+        
+    </section>
+
+    <div class="row">
+        @if (Model.Peliculas == null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @ViewBag.Message
+            </div>
+        }
+        @foreach (ML.Pelicula pelicula in Model.Peliculas)
+        {
+            <div class="col mt-3 pt-3">
+                <div class="card text-primary border-success mb-3" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">Movie</h5>
+                        <p class="card-text">Nombre: @pelicula.title</p>
+                        <img class="card-img-top" id="Img" src="https://image.tmdb.org/t/p/original/@pelicula.poster_path" />
+                        <p class="card-text">Nombre: @pelicula.overview</p>
+                        <a class="btn btn-danger bi bi-heart-fill" href="@Url.Action("FavouriteAdd", "Pelicula", new { id = pelicula.id})"></a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <nav aria-label="...">
+        <ul class="pagination pagination-lg">
+            <li class="page-item" aria-current="page">
+                <span class="page-link" href="@Url.Action("GetPopular", "Pelicula", new { letra = "1"})">1</span>
+            </li>
+            <li class="page-item"><a class="page-link" href="@Url.Action("GetPopular", "Pelicula", new { page = "2"})">2</a></li>
+            <li class="page-item"><a class="page-link" href="@Url.Action("GetPopular", "Pelicula", new { page = "3"})">3</a></li>
+            <li class="page-item"><a class="page-link" href="@Url.Action("GetPopular", "Pelicula", new { page = "4"})">4</a></li>
+            <li class="page-item"><a class="page-link" href="@Url.Action("GetPopular", "Pelicula", new { page = "5"})">5</a></li>
+        </ul>
+    </nav>
+</div>

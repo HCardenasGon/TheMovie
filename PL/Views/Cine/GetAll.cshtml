@@ -1,0 +1,60 @@
+﻿@model ML.Cine
+@{
+    ViewData["Title"] = "GetAll";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <section>
+        <h2>Módulo</h2>
+
+    </section>
+    <section>
+        <div style="float:left;">
+            @Html.ActionLink("Agregar", "ShowMap", "Cine", htmlAttributes: new { @class = "btn btn-success bi bi-person-plus-fill" })
+
+        </div>
+    </section>
+
+    <section>
+        @if (Model.Cines == null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @ViewBag.Message
+            </div>
+        }
+        <table class="table table-bordered table-responsive">
+            <thead>
+                <tr>
+                    <td class="text-center" style=" font-weight:bold;">Editar</td>
+
+                    <td class="hidden">IdCine</td>
+                    <td class="text-center" style="font-weight:bold;">Nombre</td>
+                    <td class="text-center" style="font-weight:bold;">Calle</td>
+                    <td class="text-center" style="font-weight:bold;">Ventas</td>
+                    <td class="hidden">IdZona</td>
+                    <td class="text-center" style="font-weight:bold;">Nombre Zona</td>
+
+                    <td class="text-center" style=" font-weight:bold;">Eliminar</td>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (ML.Cine cine in Model.Cines)
+                {
+                    <tr>
+                        <td class="text-center"><a class="btn btn-warning bi bi-pencil-square" href="@Url.Action("ShowMap", "Cine", new { idCIne = cine.IdCine})"></a></td>
+                        <td class="hidden">@cine.IdCine</td>
+                        <td class="text-center">@cine.Nombre</td>
+                        <td class="text-center">@cine.Direccion</td>
+                        <td class="text-center">@cine.Ventas</td>
+                        <td class="text-center">@cine.Zona.IdZona</td>
+                        <td class="text-center">@cine.Zona.Nombre</td>
+                        <td class="text-center"><a class="btn btn-danger bi bi-trash" href="@Url.Action("Delete", "Aseguradora", new { idCIne = cine.IdCine})" onclick="return confirm('Estas seguro que deseas eliminar este registro?');"></a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </section>
+</div>

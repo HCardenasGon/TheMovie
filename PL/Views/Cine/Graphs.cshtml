@@ -1,0 +1,101 @@
+﻿@model ML.Cine
+@{
+    ViewData["Title"] = "Graphs";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row">
+
+    <div class="col">
+        <div class="col" id="chartContainer" style="width: 80%;height: 400px;background-color: grey;"></div>
+    </div>
+
+    <div class="col">
+        <div class="col" id="Map" style="width: 100%;height: 400px;background-color: grey;"></div>
+    </div>
+
+</div>
+
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+<script src="http://maps.googleapis.com/maps/api/js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSKBDdPPlfca_zTwyxKiicRQn1qfgRjLw&callback=initMap&libraries=&v=weekly&sensor=false" defer></script>
+
+<script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js" defer></script>
+<script src="https://cdn.canvasjs.com/jquery.canvasjs.min.js" defer></script>
+
+<script>
+    window.onload = function () {
+        var options = {
+            title: {
+                text: "Ventas por zona"
+            },
+            animationEnabled: true,
+            data: [{
+                type: "pie",
+                startAngle: 40,
+                toolTipContent: "<b>{label}</b>: {y}%",
+                showInLegend: "true",
+                legendText: "{label}",
+                indexLabelFontSize: 16,
+                indexLabel: "{label} - {y}%",
+                dataPoints: [
+    @foreach (ML.Cine cine in Model.Cines)
+    {
+        <text>{ y: @cine.Ventas, label: "@cine.Zona.Nombre" }, </text>
+    }
+                ]
+            }]
+        };
+        $("#chartContainer").CanvasJSChart(options);
+    }
+    function initMap() {
+
+        var macc = { lat: 19.5530408, lng: -99.2748958 };
+
+        var map = new google.maps.Map(
+            document.getElementById('Map'), { zoom: 15, center: macc });
+
+        var geocoder = new google.maps.Geocoder();
+        $(document).ready(function () {
+            $.ajax({
+                type: 'GET',
+                url: '@Url.Action("GetAllJson")',
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data.cines, function (i, value) {
+                        geocoder.geocode({ 'address': value.direccion }, function (results, status) {
+                            if (status === 'OK') {
+                                var resultados = results[0].geometry.location,
+                                    resultados_lat = resultados.lat(),
+                                    resultados_long = resultados.lng();
+
+                                map.setCenter(results[0].geometry.location);
+                                var marker = new google.maps.Marker({
+                                    map: map,
+                                    position: results[0].geometry.location
+                                });
+                            } else {
+                                var mensajeError = "";
+                                if (status === "ZERO_RESULTS") {
+                                    mensajeError = "No hubo resultados para la dirección ingresada.";
+                                } else if (status === "OVER_QUERY_LIMIT" || status === "REQUEST_DENIED" || status === "UNKNOWN_ERROR") {
+                                    mensajeError = "Error general del mapa.";
+                                } else if (status === "INVALID_REQUEST") {
+                                    mensajeError = "Error de la web. Contacte con Name Agency.";
+                                }
+                                alert(mensajeError);
+                            }
+                        });
+                    });
+                },
+                error: function (ex) {
+                    alert('Failed.' + ex);
+                }
+            });//.ajax
+        });//documento
+    }
+
+    window.initMap = initMap;
+    //https://stackoverflow.com/questions/46868703/google-maps-api-add-marker-by-address-javascript
+</script>
