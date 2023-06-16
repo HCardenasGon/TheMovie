@@ -10,8 +10,11 @@ namespace PL.Controllers
     {
         private IHostingEnvironment environment;
         private IConfiguration configuration;
-        public UsuarioController(IHostingEnvironment _environment, IConfiguration _configuration)
+        private readonly IWebHostEnvironment _hostingEnvironment;
+
+        public UsuarioController(IWebHostEnvironment hostingEnvironment, IHostingEnvironment _environment, IConfiguration _configuration)
         {
+            _hostingEnvironment = hostingEnvironment;
             environment = _environment;
             configuration = _configuration;
         }
@@ -66,7 +69,8 @@ namespace PL.Controllers
 
                 MailMessage mailMessage = new MailMessage(emailOrigen, email, "Recuperar Contraseña", "<p>Correo para recuperar contraseña</p>");
                 mailMessage.IsBodyHtml = true;
-                string contenidoHTML = System.IO.File.ReadAllText(configuration["contenidoHTML"]);
+                //string contenidoHTML = System.IO.File.ReadAllText(configuration["contenidoHTML"]);
+                string contenidoHTML = System.IO.File.ReadAllText(Path.Combine(_hostingEnvironment.ContentRootPath, "wwwroot", "Templates", "Email.html"));
                 mailMessage.Body = contenidoHTML;
                 string url = configuration["url"] + HttpUtility.UrlEncode(email);
                 mailMessage.Body = mailMessage.Body.Replace("{link}", url);
